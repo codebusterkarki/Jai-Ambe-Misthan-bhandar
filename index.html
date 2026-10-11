@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jai Ambe Sweets | जय अम्बे मिष्ठान भण्डार - 100% Shudh Desi Ghee Mithai</title>
+  <meta name="description" content="Authentic Indian Sweets & Namkeen since 1984. Prepared in 100% Pure Desi Ghee with daily fresh chhena, Kashmiri kesar, and premium dry fruits." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            kesar: {
+              50: '#FFFDF5',
+              100: '#FFF9E5',
+              200: '#FFF0BF',
+              300: '#FFE28A',
+              400: '#FFCE47',
+              500: '#F59E0B',
+              600: '#D97706',
+              700: '#B45309',
+              800: '#92400E',
+              900: '#78350F',
+            },
+            royal: {
+              50: '#FDF2F2',
+              100: '#FCE7E7',
+              200: '#F9D1D1',
+              300: '#F4ADAD',
+              400: '#EA7575',
+              500: '#DC2626',
+              600: '#B91C1C',
+              700: '#991B1B',
+              800: '#7F1D1D',
+              900: '#581010',
+              950: '#350606',
+            },
+            gold: {
+              light: '#FDE68A',
+              DEFAULT: '#D4AF37',
+              dark: '#B48222',
+            }
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18 & Babel CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      background-color: #FAF7F0;
+      color: #292524;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+    .font-serif {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FAF7F0;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D97706;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #B45309;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.2s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="selection:bg-amber-200 selection:text-red-900">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // --- DATA ---
+    const SHOP_INFO = {
+      name: "Jai Ambe Sweets",
+      hindiName: "जय अम्बे मिष्ठान भण्डार",
+      tagline: "शुद्धता और स्वाद की चार दशक पुरानी परंपरा",
+      since: "1984",
+      phone: "+91 9058610744",
+      altPhone: "+91 9058610744",
+      whatsapp: "9058610744",
+      email: "tanmmaykarki14@gmail.com",
+      fssai: "10021051000342",
+      timings: "Everyday: 7:00 AM - 10:30 PM",
+      address: "Chharayal Nayak Haldwani, Gas Godam Road, Near Riya Palace",
+      city: "Haldwani",
+      state: "Uttarakhand, India",
+      googleMapsUrl: "https://maps.google.com/?q=Jai+Ambe+Misthan+Bhandar",
+      announcement: "🪔 Festive Special: Free Royal Gift Packaging on orders above ₹1,000 | 100% Desi Ghee Batches Prepared Daily!"
+    };
+
+    const CATEGORIES = [
+      { id: "all", name: "All Mithai", hindi: "सभी मिठाइयाँ" },
+      { id: "kaju-dryfruit", name: "Kaju & Dry Fruit", hindi: "काजू व मेवा" },
+      { id: "desi-ghee", name: "Pure Desi Ghee", hindi: "शुद्ध देसी घी" },
+      { id: "chhena-bengali", name: "Bengali & Chhena", hindi: "छेना मिष्ठान" },
+      { id: "traditional-seasonal", name: "Traditional & Seasonal", hindi: "पारंपरिक" },
+      { id: "namkeen-snacks", name: "Namkeen & Khasta", hindi: "नमकीन नाश्ता" },
+      { id: "gift-hampers", name: "Gift Boxes", hindi: "शगुन डिब्बे" }
+    ];
+
+    const SWEETS_PRODUCTS = [
+      {
+        id: "kaju-katli",
+        name: "Royal Kaju Katli",
+        hindiName: "शाही काजू कतली",
+        category: "kaju-dryfruit",
+        badge: "Bestseller",
+        description: "Melt-in-mouth diamond cuts made from 100% premium Goan cashews, minimal sugar, infused with fragrant cardamom and crowned with pure vegetarian silver vark.",
+        prices: { "250g": 260, "500g": 510, "1kg": 1000 },
+        defaultWeight: "500g",
+        image: "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=800&q=80",
+        rating: 4.9,
+        reviewsCount: 420,
+        shelfLife: "20 Days (Cool Dry Place)",
+        ingredients: "Goan Cashew Nuts, Refined Sugar, Cardamom, Pure Silver Leaf (Varq)",
+        gheeInfo: "Rich Cashew Butter & Khoya"
+      },
+      {
+        id: "motichoor-laddu",
+        name: "Desi Ghee Motichoor Laddu",
+        hindiName: "देसी घी मोतीचूर लड्डू",
+        category: "desi-ghee",
+        badge: "Auspicious Special",
+        description: "Ultra-fine tiny gram-flour pearls fried in pure churned Desi Ghee, delicately bathed in saffron-infused syrup, melon seeds (magaj), and roasted cardamom.",
+        prices: { "250g": 180, "500g": 350, "1kg": 680 },
+        defaultWeight: "500g",
+        image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=800&q=80",
+        rating: 4.9,
+        reviewsCount: 512,
+        shelfLife: "7 Days at Room Temperature",
+        ingredients: "Fine Gram Flour (Besan), 100% Pure Desi Ghee, Saffron, Magaj, Cardamom",
+        gheeInfo: "100% Shudh Desi Ghee"
+      },
+      {
+        id: "kesar-rasmalai",
+        name: "Kashmiri Kesar Rasmalai",
+        hindiName: "कश्मीरी केसर रसमलाई",
+        category: "chhena-bengali",
+        badge: "Chef's Signature",
+        description: "Feather-soft cottage cheese discs simmered and drenched in saffron-laced thick rabdi milk, garnished with slivered pistachios and almonds.",
+        prices: { "250g": 220, "500g": 420, "1kg": 820 },
+        defaultWeight: "500g",
+        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
+        rating: 5.0,
+        reviewsCount: 388,
+        shelfLife: "2 Days (Keep Refrigerated)",
+        ingredients: "Fresh Cow Milk Chhena, Kashmiri Kesar, Thickened Milk, Pista, Almonds",
+        gheeInfo: "Daily Fresh Cow Milk"
+      },
+      {
+        id: "shahi-gulab-jamun",
+        name: "Shahi Desi Ghee Gulab Jamun",
+        hindiName: "शाही देसी घी गुलाब जामुन",
+        category: "desi-ghee",
+        badge: "All-Time Favorite",
+        description: "Plump, melt-in-mouth dumplings crafted from rich slow-churned mawa, fried to golden hue in pure Desi Ghee and soaked in warm rose and saffron sugar syrup.",
+        prices: { "250g": 160, "500g": 310, "1kg": 600 },
+        defaultWeight: "500g",
+        image: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=800&q=80",
+        rating: 4.8,
+        reviewsCount: 290,
+        shelfLife: "5 Days (Best Served Warm)",
+        ingredients: "Fresh Milk Mawa (Khoya), Pure Desi Ghee, Saffron, Rose Water, Cardamom",
+        gheeInfo: "100% Shudh Desi Ghee"
+      },
+      {
+        id: "sponge-rasgulla",
+        name: "Kolkata Sponge Rasgulla",
+        hindiName: "कोलकाता स्पंज रसगुल्ला",
+        category: "chhena-bengali",
+        badge: "100% Cow Milk",
+        description: "Classic authentic spongy chhena spheres boiled to tender perfection in clear, light cardamom syrup. Juicy, fresh, and soothingly light on the palate.",
+        prices: { "250g": 140, "500g": 270, "1kg": 520 },
+        defaultWeight: "500g",
+        image: "https://images.unsplash.com/photo-1505253758473-96b3015f240a?auto=format&fit=crop&w=800&q=80",
+        rating: 4.9,
+        reviewsCount: 340,
+        shelfLife: "3 Days (Refrigerated)",
+        ingredients: "Pure Cow Milk Chhena, Cane Sugar, Rose Essence, Cardamom",
+        gheeInfo: "Dairy Fresh Chhena"
+      },
+      {
+        id: "malai-ghewar",
+        name: "Royal Malai Ghewar (Festive)",
+        hindiName: "शाही मलाई घेवर",
+        category: "traditional-seasonal",
+        badge: "Royal Special",
+        description: "Rajasthan's regal honeycomb delicacy fried crispy in pure Desi Ghee, dipped in aromatic syrup, topped with thick condensed malai, saffron, and silver leaf.",
+        prices: { "250g": 250, "500g": 490, "1kg": 950 },
+        defaultWeight: "500g",
+        image: "https://images.unsplash.com/photo-1627834377411-8da5f4f09de8?auto=format&fit=crop&w=800&q=80",
+        rating: 5.0,
+        reviewsCount: 460,
+        shelfLife: "3 Days for Malai / 15 Days Dry",
+        ingredients: "All-Purpose Flour, Desi Ghee, Ice Water Churn, Thick Rabdi Malai, Kesar, Pista",
+        gheeInfo: "100% Shudh Desi Ghee"
+      },
+      {
+        id: "kaju-pista-roll",
+        name: "Kaju Pista Roll",
+        hindiName: "काजू पिस्ता रोल",
+        category: "kaju-dryfruit",
+        badge: "Dry Fruit Masterpiece",
+        description: "Silky cashew paste cylinder wrapped gently around a crunchy emerald core of Iranian pistachios, green cardamom, and golden saffron threads.",
+        prices: { "250g": 290, "500g": 570, "1kg": 1100 },
+        defaultWeight: "500g",
+        image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80",
+        rating: 4.9,
+        reviewsCount: 215,
+        shelfLife: "20 Days",
+        ingredients: "Goan Cashews, Iranian Pistachios, Green Cardamom, Saffron, Silver Leaf",
+        gheeInfo: "Pure Nut Confection"
+      },
+      {
+        id: "besan-laddu",
+        name: "Shahi Desi Ghee Besan Laddu",
+        hindiName: "शाही देसी घी बेसन लड्डू",
+        category: "desi-ghee",
+        badge: "Traditional Classic",
+        description: "Coarse gram flour roasted on a slow flame in Desi Ghee until nutty and golden, blended with crunchy bura sugar, almonds, and melon seeds.",
+        prices: { "250g": 170, "500g": 330, "1kg": 640 },
+        defaultWeight: "500g",
+        image: "https://images.unsplash.com/photo-1605197150244-67d7301c34a2?auto=format&fit=crop&w=800&q=80",
+        rating: 4.8,
+        reviewsCount: 310,
+        shelfLife: "30 Days at Room Temperature",
+        ingredients: "Coarse Gram Flour, Pure Desi Ghee, Tagar Sugar, Magaj, Almonds",
+        gheeInfo: "100% Shudh Desi Ghee"
+      },
+      {
+        id: "anjeer-dryfruit-barfi",
+        name: "Sugar-Free Anjeer Barfi",
+        hindiName: "शुगर-फ्री अंजीर मेवा बर्फी",
+        category: "kaju-dryfruit",
+        badge: "Zero Added Sugar",
+        description: "Wholesome sun-dried Turkish figs slow-cooked with crunchy roasted almonds, cashews, pistachios, and walnuts without refined sugar.",
+        prices: { "250g": 320, "500g": 620, "1kg": 1200 },
+        defaultWeight: "500g",
+        image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80",
+        rating: 4.9,
+        reviewsCount: 185,
+        shelfLife: "25 Days",
+        ingredients: "Dried Turkish Figs, Almonds, Cashews, Pistachios, Walnuts, Desi Ghee",
+        gheeInfo: "Diabetic Friendly & Healthy"
+      },
+      {
+        id: "hing-kachori",
+        name: "Special Hing Khasta Kachori (4 Pcs)",
+        hindiName: "स्पेशल हींग खस्ता कचौरी",
+        category: "namkeen-snacks",
+        badge: "Morning Fresh",
+        description: "Flaky, multi-layered puffed crisps filled with spiced urad dal, coarse fennel, crushed black pepper, and premium aromatic asafoetida (Hing).",
+        prices: { "250g": 120, "500g": 220, "1kg": 420 },
+        defaultWeight: "500g",
+        image: "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
+        rating: 4.9,
+        reviewsCount: 640,
+        shelfLife: "Best on Day of Purchase",
+        ingredients: "Flour, Spiced Urad Dal, Pure Hing, Fennel, Cloves, Mustard Oil",
+        gheeInfo: "Traditional Halwai Masala"
+      },
+      {
+        id: "shagun-box",
+        name: "Shagun Auspicious Mithai Box",
+        hindiName: "शगुन 4-इन-1 उत्सव बॉक्स",
+        category: "gift-hampers",
+        badge: "Wedding & Puja",
+        description: "Specially crafted 4-compartment golden box for weddings and pujas. Includes Kaju Katli, Motichoor Laddu, Besan Laddu, and Milk Cake.",
+        prices: { "250g": 380, "500g": 720, "1kg": 1380 },
+        defaultWeight: "1kg",
+        image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80",
+        rating: 4.9,
+        reviewsCount: 245,
+        shelfLife: "15 Days",
+        ingredients: "Custom 4 Sweets in Gold Embellished Box with Custom Note",
+        gheeInfo: "Best for Celebrations"
+      }
+    ];
+
+    const BOX_BUILDER_OPTIONS = [
+      { id: "kaju-katli", name: "Kaju Katli", type: "Dry Fruit", pricePerSlot: 130 },
+      { id: "motichoor-laddu", name: "Motichoor Laddu", type: "Desi Ghee", pricePerSlot: 90 },
+      { id: "kaju-pista-roll", name: "Kaju Pista Roll", type: "Dry Fruit", pricePerSlot: 145 },
+      { id: "besan-laddu", name: "Besan Laddu", type: "Desi Ghee", pricePerSlot: 85 },
+      { id: "anjeer-dryfruit-barfi", name: "Anjeer Barfi", type: "Sugar-Free", pricePerSlot: 155 },
+      { id: "shahi-gulab-jamun", name: "Gulab Jamun", type: "Desi Ghee", pricePerSlot: 80 }
+    ];
+
+    const REVIEWS = [
+      {
+        name: "Rajeshwar Singhania",
+        location: "Heritage Chowk, Patron for 18 Years",
+        rating: 5,
+        date: "2 days ago",
+        text: "Whenever there is a wedding or Diwali in our family, Jai Ambe Sweets is our only destination. Their Kaju Katli and Motichoor Laddu have had the exact same royal fragrance and richness for over 20 years!",
+        favorite: "Royal Kaju Katli & Motichoor Laddu"
+      },
+      {
+        name: "Meenakshi Agarwal",
+        location: "Civil Lines, Wedding Client",
+        rating: 5,
+        date: "1 week ago",
+        text: "Ordered 350 customized Shagun boxes for my daughter's wedding. Every single guest praised the freshness and the golden box presentation. Truly the best sweet shop in town!",
+        favorite: "Custom Shagun Box & Malai Ghewar"
+      },
+      {
+        name: "Dr. Vikramaditya Rathore",
+        location: "University Campus",
+        rating: 5,
+        date: "2 weeks ago",
+        text: "As a diabetic patient, their Sugar-Free Anjeer Barfi is an absolute blessing. 100% authentic dry fruits with no fake sweeteners. Also, their morning Hing Kachoris are unmatched.",
+        favorite: "Sugar-Free Anjeer Barfi & Hing Kachori"
+      }
+    ];
+
+    const FAQS = [
+      {
+        q: "How do you guarantee that all sweets are made in pure Desi Ghee?",
+        a: "We procure milk and butter directly from certified rural dairy cooperatives. Our kitchens are completely vanaspati-free. Customers can even visit our preparation gallery at our main store to witness the live cooking process!"
+      },
+      {
+        q: "Can I place bulk orders for weddings, pujas, and corporate gifting?",
+        a: "Yes! We specialize in bulk orders from 20 boxes to 5,000+ boxes with customized branding, custom gift boxes, and special bulk pricing tiers. You can use our WhatsApp ordering or inquiry form on this website."
+      },
+      {
+        q: "Do you deliver to home and what are the delivery charges?",
+        a: "We offer same-day express local delivery within 45-60 minutes across the city. For orders above ₹800, home delivery is completely FREE. Chhena and milk sweets are dispatched in food-grade chilled containers."
+      },
+      {
+        q: "How long do the sweets last? What is the recommended shelf life?",
+        a: "Dry fruit sweets like Kaju Katli and Anjeer Barfi stay fresh for 20-25 days. Desi Ghee Laddus and Besan sweets last up to 30 days. Fresh Bengali sweets (Rasgulla, Rasmalai) should be refrigerated and consumed within 2-3 days."
+      }
+    ];
+
+    // --- MAIN REACT COMPONENT ---
+    function App() {
+      const [selectedCategory, setSelectedCategory] = useState('all');
+      const [searchQuery, setSearchQuery] = useState('');
+      const [itemWeights, setItemWeights] = useState({});
+      const [cartItems, setCartItems] = useState([
+        {
+          id: 'kaju-katli-500g',
+          name: 'Royal Kaju Katli',
+          hindiName: 'शाही काजू कतली',
+          weight: '500g',
+          price: 510,
+          quantity: 1,
+          image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=800&q=80'
+        },
+        {
+          id: 'motichoor-laddu-500g',
+          name: 'Desi Ghee Motichoor Laddu',
+          hindiName: 'देसी घी मोतीचूर लड्डू',
+          weight: '500g',
+          price: 350,
+          quantity: 1,
+          image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=800&q=80'
+        }
+      ]);
+      const [isCartOpen, setIsCartOpen] = useState(false);
+      const [selectedProductForModal, setSelectedProductForModal] = useState(null);
+      const [modalWeight, setModalWeight] = useState('500g');
+      const [modalQty, setModalQty] = useState(1);
+      const [feedbackId, setFeedbackId] = useState(null);
+
+      // Custom Box state
+      const [boxSlots, setBoxSlots] = useState([null, null, null, null]);
+      const [activeSlot, setActiveSlot] = useState(0);
+      const [boxRibbon, setBoxRibbon] = useState('Royal Velvet Red');
+      const [boxMessage, setBoxMessage] = useState('Warmest Blessings & Festive Greetings');
+      const [boxSuccess, setBoxSuccess] = useState(false);
+
+      // Catering Calculator state
+      const [guestCount, setGuestCount] = useState(250);
+      const [calcWeight, setCalcWeight] = useState('500g');
+
+      // FAQ Accordion state
+      const [openFaq, setOpenFaq] = useState(0);
+
+      // Checkout form state
+      const [custName, setCustName] = useState('');
+      const [custPhone, setCustPhone] = useState('');
+      const [custAddress, setCustAddress] = useState('');
+      const [deliveryType, setDeliveryType] = useState('Home Delivery');
+      const [packagingType, setPackagingType] = useState('Standard Eco Box');
+      const [coupon, setCoupon] = useState('');
+      const [couponApplied, setCouponApplied] = useState(false);
+
+      const getProductWeight = (id) => itemWeights[id] || '500g';
+      const setProductWeight = (id, w) => setItemWeights(prev => ({ ...prev, [id]: w }));
+
+      const addToCart = (item) => {
+        setCartItems(prev => {
+          const idx = prev.findIndex(p => p.id === item.id);
+          if (idx > -1) {
+            const updated = [...prev];
+            updated[idx].quantity = (updated[idx].quantity || 1) + (item.quantity || 1);
+            return updated;
+          }
+          return [...prev, item];
+        });
+      };
+
+      const handleAddFromCard = (product) => {
+        const weight = getProductWeight(product.id);
+        const price = product.prices[weight];
+        addToCart({
+          id: `${product.id}-${weight}`,
+          name: product.name,
+          hindiName: product.hindiName,
+          weight,
+          price,
+          quantity: 1,
+          image: product.image
+        });
+        setFeedbackId(product.id);
+        setTimeout(() => setFeedbackId(null), 1200);
+      };
+
+      // Custom Box calculations
+      const filledSlots = boxSlots.filter(Boolean).length;
+      const boxSweetsCost = boxSlots.reduce((tot, s) => tot + (s ? s.pricePerSlot * 2.5 : 0), 0);
+      const totalBoxPrice = Math.round(120 + boxSweetsCost);
+
+      const handleBoxSlotSweet = (sweet) => {
+        const updated = [...boxSlots];
+        let target = activeSlot;
+        if (updated[target]) {
+          const nextEmpty = updated.findIndex(s => s === null);
+          if (nextEmpty !== -1) target = nextEmpty;
+        }
+        updated[target] = sweet;
+        setBoxSlots(updated);
+        const next = updated.findIndex(s => s === null);
+        if (next !== -1) setActiveSlot(next);
+      };
+
+      const handleAddBoxToCart = () => {
+        if (filledSlots < 4) return;
+        addToCart({
+          id: `custom-box-${Date.now()}`,
+          name: 'Royal 4-Mithai Shagun Box',
+          hindiName: 'शाही 4-इन-1 शगुन डिब्बा',
+          isCustomBox: true,
+          weight: 'Approx 800g',
+          price: totalBoxPrice,
+          quantity: 1,
+          image: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80',
+          sweets: boxSlots.map(s => s.name),
+          ribbonStyle: boxRibbon,
+          greetingMessage: boxMessage
+        });
+        setBoxSuccess(true);
+        setTimeout(() => setBoxSuccess(false), 2000);
+      };
+
+      // Cart calculations
+      const subtotal = cartItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+      const packFee = packagingType === 'Royal Golden Gift Box' ? 50 : 0;
+      const delFee = deliveryType === 'Store Pickup' ? 0 : subtotal >= 800 ? 0 : 50;
+      const discount = couponApplied ? Math.round(subtotal * 0.10) : 0;
+      const grandTotal = Math.max(0, subtotal + packFee + delFee - discount);
+      const totalCartCount = cartItems.reduce((acc, i) => acc + (i.quantity || 1), 0);
+
+      const handleWhatsAppOrder = () => {
+        if (cartItems.length === 0) return;
+        const itemsList = cartItems.map((item, idx) => {
+          if (item.isCustomBox) {
+            return `${idx + 1}. *${item.name}* (Weight: ${item.weight})\n   - Assortment: ${item.sweets.join(', ')}\n   - Ribbon: ${item.ribbonStyle}\n   - Card: "${item.greetingMessage}"\n   - Price: ₹${item.price} x ${item.quantity || 1}`;
+          }
+          return `${idx + 1}. *${item.name}* (${item.weight})\n   - Qty: ${item.quantity || 1}\n   - Price: ₹${item.price * (item.quantity || 1)}`;
+        }).join('\n\n');
+
+        const message = `🪔 *NEW ORDER - JAI AMBE SWEETS* 🪔\n\n` +
+          `*Customer Details:*\n` +
+          `👤 Name: ${custName || 'Valued Customer'}\n` +
+          `📞 Phone: ${custPhone || 'Not provided'}\n` +
+          `📍 Delivery: ${deliveryType}\n` +
+          (deliveryType === 'Home Delivery' ? `🏠 Address: ${custAddress || 'Shared upon confirmation'}\n` : '') +
+          `🎁 Packaging: ${packagingType}\n\n` +
+          `*Items Ordered:*\n${itemsList}\n\n` +
+          `*Payment Summary:*\n` +
+          `• Subtotal: ₹${subtotal}\n` +
+          `• Packaging: ₹${packFee}\n` +
+          `• Delivery: ${delFee === 0 ? 'FREE' : '₹' + delFee}\n` +
+          (couponApplied ? `• Discount: -₹${discount}\n` : '') +
+          `*Grand Total: ₹${grandTotal}*\n\n` +
+          `Please confirm order preparation and dispatch time. Thank you!`;
+
+        const cleanPhone = (SHOP_INFO.whatsapp || '').replace(/[^0-9]/g, '');
+        window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`, '_blank');
+      };
+
+      const filteredProducts = SWEETS_PRODUCTS.filter(p => {
+        const matchCat = selectedCategory === 'all' || p.category === selectedCategory;
+        const matchSearch = !searchQuery ||
+          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.hindiName.includes(searchQuery) ||
+          p.description.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchCat && matchSearch;
+      });
+
+      return (
+        <div className="min-h-screen flex flex-col bg-[#FAF7F0]">
+          
+          {/* 1. TOP ANNOUNCEMENT BAR */}
+          <div className="bg-gradient-to-r from-red-950 via-red-900 to-amber-950 text-amber-100 text-xs py-2 px-4 border-b border-amber-600/30">
+            <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+              <div className="flex items-center gap-2 font-medium">
+                <span className="text-amber-400">✨</span>
+                <span className="text-amber-200 font-semibold">{SHOP_INFO.announcement}</span>
+              </div>
+              <div className="flex items-center gap-4 text-xs text-amber-200/90 font-medium">
+                <span>🕒 {SHOP_INFO.timings}</span>
+                <span>•</span>
+                <a href={`tel:${SHOP_INFO.phone}`} className="hover:text-white font-bold">
+                  📞 Call: {SHOP_INFO.phone}
+                </a>
+                <span>•</span>
+                <span className="bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-400/40 text-[11px] font-bold">
+                  FSSAI: {SHOP_INFO.fssai}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. NAVBAR (Recreated with better gaps and padding) */}
+          <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-200/70 shadow-sm transition-all duration-300">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-20 sm:h-22 gap-4 lg:gap-8">
+                
+                {/* Brand Logo & Heritage Title */}
+                <div className="flex items-center shrink-0">
+                  <a href="#" className="flex items-center gap-3 sm:gap-3.5 group py-1.5">
+                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-red-800 via-red-900 to-amber-900 flex items-center justify-center text-amber-300 shadow-md group-hover:scale-105 transition-all duration-300 border border-amber-400/40 text-xl font-serif font-black shrink-0">
+                      👑
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl sm:text-2xl font-bold font-serif tracking-tight text-red-950 leading-tight">
+                          {SHOP_INFO.name}
+                        </span>
+                        <span className="hidden sm:inline-flex items-center text-[10px] bg-red-100 text-red-800 font-sans font-bold px-2 py-0.5 rounded-full border border-red-200">
+                          Est. {SHOP_INFO.since}
+                        </span>
+                      </div>
+                      <span className="text-[11px] sm:text-xs text-amber-800/90 font-medium tracking-wide leading-tight mt-0.5">
+                        {SHOP_INFO.hindiName} <span className="text-amber-500">•</span> 100% Desi Ghee
+                      </span>
+                    </div>
+                  </a>
+                </div>
+
+                {/* Nav Links with Comfortable Pill Padding & Balanced Gaps */}
+                <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-sm font-semibold text-stone-700">
+                  <a href="#menu" className="px-3.5 py-2 rounded-xl hover:bg-amber-50 hover:text-red-900 text-stone-700 transition-all duration-200">
+                    Mithai Menu
+                  </a>
+                  <a href="#box-builder" className="px-3.5 py-2 rounded-xl bg-amber-50/80 hover:bg-amber-100 text-amber-900 border border-amber-200/80 transition-all duration-200 flex items-center gap-1.5 shadow-2xs">
+                    <span className="text-amber-500 text-xs">✨</span>
+                    <span>Custom Shagun Box</span>
+                  </a>
+                  <a href="#purity" className="px-3.5 py-2 rounded-xl hover:bg-amber-50 hover:text-red-900 text-stone-700 transition-all duration-200">
+                    Purity Promise
+                  </a>
+                  <a href="#catering" className="px-3.5 py-2 rounded-xl hover:bg-amber-50 hover:text-red-900 text-stone-700 transition-all duration-200">
+                    Weddings & Bulk
+                  </a>
+                  <a href="#reviews" className="px-3.5 py-2 rounded-xl hover:bg-amber-50 hover:text-red-900 text-stone-700 transition-all duration-200">
+                    Reviews
+                  </a>
+                  <a href="#location" className="px-3.5 py-2 rounded-xl hover:bg-amber-50 hover:text-red-900 text-stone-700 transition-all duration-200">
+                    Store & Timings
+                  </a>
+                </nav>
+
+                {/* Search & Actions with Refined Spacing */}
+                <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0">
+                  <div className="relative hidden xl:block">
+                    <input
+                      type="text"
+                      placeholder="Search Kaju Katli, Laddu..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-48 2xl:w-56 pl-9 pr-3.5 py-2 text-xs bg-amber-50/60 border border-amber-200/90 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 focus:bg-white placeholder-stone-400 transition-all duration-200"
+                    />
+                    <span className="absolute left-3 top-2.5 text-stone-400 text-xs pointer-events-none">🔍</span>
+                  </div>
+
+                  <a
+                    href={`https://wa.me/${SHOP_INFO.whatsapp}?text=${encodeURIComponent("Namaste! I would like to order fresh sweets from Jai Ambe Sweets.")}`}
+                    target="_blank"
+                    className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-300 hover:bg-emerald-100 hover:border-emerald-400 shadow-sm transition-all duration-200"
+                  >
+                    <span>💬</span>
+                    <span>WhatsApp</span>
+                  </a>
+
+                  <button
+                    onClick={() => setIsCartOpen(true)}
+                    className="flex items-center gap-2 px-4 sm:px-4.5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-red-800 via-red-900 to-amber-950 text-white font-medium text-xs sm:text-sm shadow-md hover:from-red-900 hover:to-black transition-all duration-200 hover:scale-105 active:scale-95"
+                  >
+                    <span className="font-semibold">🛍️ Plate</span>
+                    <span className="bg-amber-400 text-red-950 text-xs font-black px-2 py-0.5 rounded-full min-w-[22px] text-center">
+                      {totalCartCount}
+                    </span>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </header>
+
+          {/* 3. HERO SECTION */}
+          <section className="relative overflow-hidden bg-gradient-to-b from-[#4A0E0E] via-[#5C1111] to-[#781818] text-white pt-12 pb-20 sm:pt-16 sm:pb-28">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                
+                <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-200 text-xs sm:text-sm font-semibold tracking-wide">
+                    <span>👑</span>
+                    <span>A Legacy of Royal Taste Since 1984</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                    <span className="text-amber-300">40+ Years of Purity</span>
+                  </div>
+
+                  <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold font-serif leading-[1.15] text-amber-50">
+                    <span className="block text-amber-300 font-serif font-normal text-xl sm:text-2xl md:text-3xl mb-1">
+                      {SHOP_INFO.hindiName}
+                    </span>
+                    Handcrafted in <br className="hidden sm:inline" />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400">
+                      100% Shudh Desi Ghee
+                    </span>
+                  </h1>
+
+                  <p className="text-base sm:text-lg text-amber-100/85 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
+                    Every delicacy at <strong className="text-amber-200">Jai Ambe Sweets</strong> is slow-crafted with slow-churned Desi Ghee, daily fresh dairy mawa, Kashmiri saffron, and premium dry fruits. No preservatives, zero vanaspati — just the divine taste of true Indian celebration.
+                  </p>
+
+                  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 pt-1">
+                    <div className="bg-red-950/60 border border-amber-500/30 px-3 py-1.5 rounded-xl text-xs text-amber-100 font-medium">
+                      🛡️ 100% Pure Desi Ghee
+                    </div>
+                    <div className="bg-red-950/60 border border-amber-500/30 px-3 py-1.5 rounded-xl text-xs text-amber-100 font-medium">
+                      🥛 Fresh Cow Milk Chhena Daily
+                    </div>
+                    <div className="bg-red-950/60 border border-amber-500/30 px-3 py-1.5 rounded-xl text-xs text-amber-100 font-medium">
+                      ✨ Zero Artificial Colors
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3">
+                    <a
+                      href="#menu"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 text-red-950 font-bold text-sm sm:text-base shadow-lg hover:from-amber-300 hover:to-amber-400 transition-all"
+                    >
+                      Explore Mithai Menu →
+                    </a>
+
+                    <a
+                      href="#box-builder"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-sm sm:text-base border border-amber-300/40 backdrop-blur-sm transition-all"
+                    >
+                      🎁 Build Custom Shagun Box
+                    </a>
+
+                    <a
+                      href={`https://wa.me/${SHOP_INFO.whatsapp}?text=${encodeURIComponent("Namaste! I would like to place an order from Jai Ambe Sweets.")}`}
+                      target="_blank"
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md transition-all"
+                    >
+                      💬 Order on WhatsApp
+                    </a>
+                  </div>
+
+                  <div className="flex items-center justify-center lg:justify-start gap-3 pt-2 text-xs text-amber-200">
+                    <span className="text-amber-400">★★★★★</span>
+                    <span><strong>4.9 / 5.0</strong> Rating</span>
+                    <span>•</span>
+                    <span>15,000+ Celebrations & Weddings Served</span>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-5 relative">
+                  <div className="relative mx-auto max-w-md lg:max-w-none">
+                    <div className="relative rounded-3xl overflow-hidden border-2 border-amber-400/50 shadow-2xl bg-red-950">
+                      <img
+                        src="https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=1000&q=80"
+                        alt="Jai Ambe Sweets Royal Assortment"
+                        className="w-full h-80 sm:h-96 object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-red-950 via-red-950/20 to-transparent"></div>
+                      <div className="absolute bottom-4 left-4 right-4 bg-red-950/80 backdrop-blur-md p-4 rounded-2xl border border-amber-400/40 flex items-center justify-between">
+                        <div>
+                          <span className="text-amber-300 font-serif text-sm font-bold block">
+                            Royal Kaju & Desi Ghee Thali
+                          </span>
+                          <span className="text-xs text-amber-100/80">
+                            Kaju Katli • Motichoor • Rasmalai • Ghewar
+                          </span>
+                        </div>
+                        <span className="bg-amber-400 text-red-950 text-xs font-bold px-2.5 py-1 rounded-lg">
+                          Fresh Today
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* 4 Counter Cards */}
+              <div className="mt-16 sm:mt-20 grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-amber-500/20 text-center">
+                <div className="p-4 rounded-2xl bg-white/5 border border-amber-400/20">
+                  <span className="block text-2xl sm:text-3xl font-extrabold text-amber-300 font-serif">40+</span>
+                  <span className="text-xs sm:text-sm text-amber-100/80 font-medium">Years of Purity</span>
+                </div>
+                <div className="p-4 rounded-2xl bg-white/5 border border-amber-400/20">
+                  <span className="block text-2xl sm:text-3xl font-extrabold text-amber-300 font-serif">100%</span>
+                  <span className="text-xs sm:text-sm text-amber-100/80 font-medium">Pure Desi Ghee</span>
+                </div>
+                <div className="p-4 rounded-2xl bg-white/5 border border-amber-400/20">
+                  <span className="block text-2xl sm:text-3xl font-extrabold text-amber-300 font-serif">60+</span>
+                  <span className="text-xs sm:text-sm text-amber-100/80 font-medium">Mithai Varieties</span>
+                </div>
+                <div className="p-4 rounded-2xl bg-white/5 border border-amber-400/20">
+                  <span className="block text-2xl sm:text-3xl font-extrabold text-amber-300 font-serif">50,000+</span>
+                  <span className="text-xs sm:text-sm text-amber-100/80 font-medium">Happy Families</span>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          {/* 4. MITHAI CATALOGUE */}
+          <section id="menu" className="py-16 sm:py-24 bg-[#FAF7F0] border-t border-amber-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              
+              <div className="text-center max-w-3xl mx-auto mb-12">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold uppercase tracking-wider mb-3">
+                  <span>✨</span>
+                  <span>Mithai & Namkeen Catalogue</span>
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-serif font-bold text-red-950 mb-3">
+                  Pure Desi Delicacies for Every Celebration
+                </h2>
+                <p className="text-stone-600 text-sm sm:text-base">
+                  Select your preferred weight (250g, 500g, or 1kg) for fresh daily preparations. Prepared in 100% Shudh Desi Ghee.
+                </p>
+              </div>
+
+              {/* Categories */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8">
+                {CATEGORIES.map(cat => {
+                  const isActive = selectedCategory === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={`whitespace-nowrap px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all border shrink-0 ${
+                        isActive
+                          ? 'bg-red-900 text-amber-100 border-red-950 shadow-md scale-105'
+                          : 'bg-white text-stone-700 border-amber-200 hover:border-red-300 hover:bg-amber-50'
+                      }`}
+                    >
+                      {cat.name} ({cat.hindi})
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Product Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredProducts.map(product => {
+                  const weight = getProductWeight(product.id);
+                  const price = product.prices[weight];
+                  const isFeedback = feedbackId === product.id;
+
+                  return (
+                    <div
+                      key={product.id}
+                      className="bg-white rounded-2xl overflow-hidden border border-amber-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group"
+                    >
+                      <div className="relative h-48 overflow-hidden bg-amber-50">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        {product.badge && (
+                          <span className="absolute top-3 left-3 bg-red-900/90 text-amber-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-amber-400/30">
+                            {product.badge}
+                          </span>
+                        )}
+                        <div className="absolute top-3 right-3 bg-white/90 p-1 rounded-md shadow">
+                          <div className="w-3.5 h-3.5 border-2 border-emerald-600 rounded flex items-center justify-center">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-600"></div>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setSelectedProductForModal(product);
+                            setModalWeight(weight);
+                            setModalQty(1);
+                          }}
+                          className="absolute bottom-3 right-3 px-2 py-1 rounded-lg bg-white/90 text-stone-800 text-xs font-bold hover:bg-white shadow"
+                        >
+                          👁️ View Details
+                        </button>
+                      </div>
+
+                      <div className="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                          <span className="text-xs font-semibold text-amber-800 block mb-0.5">
+                            {product.hindiName}
+                          </span>
+                          <h3 className="font-serif font-bold text-red-950 text-base leading-tight mb-1">
+                            {product.name}
+                          </h3>
+                          <p className="text-stone-500 text-xs line-clamp-2 mb-3">
+                            {product.description}
+                          </p>
+                          <div className="text-[11px] text-amber-900 bg-amber-50 p-2 rounded-lg border border-amber-100 mb-3">
+                            🛡️ {product.gheeInfo}
+                          </div>
+                        </div>
+
+                        <div>
+                          {/* Weight selector */}
+                          <div className="grid grid-cols-3 gap-1 bg-stone-100 p-1 rounded-xl text-xs font-semibold mb-3">
+                            {['250g', '500g', '1kg'].map(w => (
+                              <button
+                                key={w}
+                                onClick={() => setProductWeight(product.id, w)}
+                                className={`py-1 rounded-lg transition-all text-center ${
+                                  weight === w
+                                    ? 'bg-white text-red-950 font-bold shadow-sm border border-amber-200'
+                                    : 'text-stone-600'
+                                }`}
+                              >
+                                {w}
+                              </button>
+                            ))}
+                          </div>
+
+                          <div className="pt-2 border-t border-amber-100 flex items-center justify-between">
+                            <div>
+                              <span className="text-[11px] text-stone-400 block">Price ({weight})</span>
+                              <span className="text-lg font-black text-red-950">₹{price}</span>
+                            </div>
+                            <button
+                              onClick={() => handleAddFromCard(product)}
+                              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                                isFeedback
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'bg-red-900 hover:bg-red-950 text-amber-200 hover:text-white'
+                              }`}
+                            >
+                              {isFeedback ? '✓ Added!' : '+ Add to Plate'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+            </div>
+          </section>
+
+          {/* 5. CUSTOM SHAGUN BOX BUILDER */}
+          <section id="box-builder" className="py-16 sm:py-24 bg-gradient-to-b from-[#2D0A0A] via-[#3B0D0D] to-[#250808] text-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              
+              <div className="text-center max-w-3xl mx-auto mb-12">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 text-xs font-bold uppercase tracking-wider mb-3">
+                  <span>🎁</span>
+                  <span>Royal Custom Box Builder</span>
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-serif font-bold text-amber-50 mb-3">
+                  Build Your Own 4-Variety Shagun Box
+                </h2>
+                <p className="text-amber-100/80 text-sm sm:text-base">
+                  Pick 4 royal delicacies to create an auspicious gift hamper with personalized greeting card and luxury ribbon.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                {/* Virtual Box */}
+                <div className="lg:col-span-6 bg-gradient-to-br from-[#4A1010] to-[#250606] p-6 rounded-3xl border-2 border-amber-400/60 shadow-2xl">
+                  <div className="flex items-center justify-between pb-4 border-b border-amber-500/30 mb-4">
+                    <span className="font-serif font-bold text-amber-200 text-base">
+                      Royal Golden Box ({filledSlots}/4 Filled)
+                    </span>
+                    <span className="text-xs bg-amber-400/20 text-amber-300 px-2.5 py-1 rounded-full border border-amber-400/40">
+                      {boxRibbon}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 mb-5">
+                    {boxSlots.map((slot, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => setActiveSlot(idx)}
+                        className={`h-28 rounded-2xl border-2 transition-all p-3 flex flex-col items-center justify-center cursor-pointer text-center relative ${
+                          slot
+                            ? 'bg-amber-900/60 border-amber-400'
+                            : activeSlot === idx
+                            ? 'bg-amber-400/10 border-amber-300 border-dashed animate-pulse'
+                            : 'bg-black/30 border-amber-500/20 border-dashed'
+                        }`}
+                      >
+                        {slot ? (
+                          <>
+                            <span className="text-xs font-serif font-bold text-amber-200 mb-1">{slot.name}</span>
+                            <span className="text-[10px] bg-amber-400/20 text-amber-300 px-2 py-0.5 rounded-full">{slot.type}</span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const u = [...boxSlots];
+                                u[idx] = null;
+                                setBoxSlots(u);
+                              }}
+                              className="absolute top-2 right-2 text-red-300 text-xs"
+                            >
+                              ✕
+                            </button>
+                          </>
+                        ) : (
+                          <div className="text-amber-200/50 text-xs">
+                            <span>Slot #{idx + 1}</span>
+                            <span className="block text-[10px]">Tap to choose</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="space-y-3 text-xs border-t border-amber-500/20 pt-3">
+                    <div>
+                      <label className="block text-amber-200 font-semibold mb-1">Select Ribbon:</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {['Royal Velvet Red', 'Pure Gold Brocade', 'Festive Marigold'].map(r => (
+                          <button
+                            key={r}
+                            onClick={() => setBoxRibbon(r)}
+                            className={`py-1.5 px-2 rounded-xl text-[11px] border transition-all ${
+                              boxRibbon === r
+                                ? 'bg-amber-400 text-red-950 font-bold border-amber-300'
+                                : 'bg-white/5 text-amber-100/70 border-white/10'
+                            }`}
+                          >
+                            {r}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-amber-200 font-semibold mb-1">Greeting Card Note (Free):</label>
+                      <input
+                        type="text"
+                        value={boxMessage}
+                        onChange={(e) => setBoxMessage(e.target.value)}
+                        className="w-full bg-black/40 border border-amber-500/30 rounded-xl px-3 py-2 text-amber-100 text-xs focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-6 pt-4 border-t border-amber-500/30 flex items-center justify-between">
+                    <div>
+                      <span className="text-xs text-amber-200/70 block">Total Box Price:</span>
+                      <span className="text-2xl font-black text-amber-300">₹{totalBoxPrice}</span>
+                    </div>
+                    <button
+                      onClick={handleAddBoxToCart}
+                      disabled={filledSlots < 4}
+                      className={`px-6 py-3 rounded-full font-bold text-xs sm:text-sm transition-all ${
+                        filledSlots === 4
+                          ? boxSuccess
+                            ? 'bg-emerald-600 text-white'
+                            : 'bg-gradient-to-r from-amber-400 to-yellow-500 text-red-950 hover:from-amber-300 hover:to-amber-400'
+                          : 'bg-white/10 text-stone-400 cursor-not-allowed'
+                      }`}
+                    >
+                      {boxSuccess ? '✓ Box Added!' : filledSlots === 4 ? 'Add Custom Box to Plate' : `Fill ${4 - filledSlots} More Slot(s)`}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Sweet Selection Tray */}
+                <div className="lg:col-span-6 space-y-4">
+                  <h3 className="text-lg font-serif font-bold text-amber-100">
+                    Pick Sweets for Slot #{activeSlot + 1}
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {BOX_BUILDER_OPTIONS.map(sweet => (
+                      <div
+                        key={sweet.id}
+                        onClick={() => handleBoxSlotSweet(sweet)}
+                        className="p-3.5 rounded-2xl bg-white/5 border border-amber-500/25 hover:border-amber-400 hover:bg-white/10 transition-all cursor-pointer flex items-center justify-between"
+                      >
+                        <div>
+                          <span className="font-serif font-bold text-sm text-amber-100 block">{sweet.name}</span>
+                          <span className="text-[11px] text-amber-200/60">{sweet.type}</span>
+                        </div>
+                        <span className="px-2 py-1 rounded-lg bg-amber-400/20 text-amber-300 text-xs font-bold">+</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </section>
+
+          {/* 6. PURITY PROMISE */}
+          <section id="purity" className="py-16 sm:py-24 bg-white border-t border-amber-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold tracking-wider mb-3">
+                <span>🛡️</span>
+                <span>The Jai Ambe Purity Guarantee</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-serif font-bold text-red-950 mb-4">
+                Four Decades of Trust, Pure Milk & 100% Desi Ghee
+              </h2>
+              <p className="text-stone-600 text-sm sm:text-base max-w-2xl mx-auto mb-12">
+                We boil over 800 liters of pure cow & buffalo milk daily to prepare fresh, chemical-free mawa and chhena. No palm oil, zero vanaspati.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+                <div className="p-6 rounded-2xl bg-amber-50 border border-amber-200">
+                  <span className="text-2xl mb-2 block">🪔</span>
+                  <h3 className="font-serif font-bold text-red-950 text-lg mb-1">100% Shudh Desi Ghee</h3>
+                  <p className="text-stone-600 text-xs leading-relaxed">Slow-churned pure Desi Ghee in every single ghee delicacy. Zero vanaspati or palm oil.</p>
+                </div>
+                <div className="p-6 rounded-2xl bg-amber-50 border border-amber-200">
+                  <span className="text-2xl mb-2 block">🥛</span>
+                  <h3 className="font-serif font-bold text-red-950 text-lg mb-1">Daily Fresh Chhena</h3>
+                  <p className="text-stone-600 text-xs leading-relaxed">In-house slow-simmered cottage cheese and mawa prepared fresh every single sunrise.</p>
+                </div>
+                <div className="p-6 rounded-2xl bg-amber-50 border border-amber-200">
+                  <span className="text-2xl mb-2 block">🌾</span>
+                  <h3 className="font-serif font-bold text-red-950 text-lg mb-1">Kashmiri Kesar & Dry Fruits</h3>
+                  <p className="text-stone-600 text-xs leading-relaxed">Original Pampore saffron and handpicked Goan cashews and California almonds.</p>
+                </div>
+                <div className="p-6 rounded-2xl bg-amber-50 border border-amber-200">
+                  <span className="text-2xl mb-2 block">✨</span>
+                  <h3 className="font-serif font-bold text-red-950 text-lg mb-1">Pure Silver Vark</h3>
+                  <p className="text-stone-600 text-xs leading-relaxed">100% Vegetarian machine-made silver foil tested for maximum purity.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 7. WEDDING & CATERING */}
+          <section id="catering" className="py-16 sm:py-24 bg-[#FAF7F0] border-t border-amber-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-12">
+                <span className="text-xs font-bold text-amber-800 uppercase tracking-wider block mb-2">Bulk Orders & Events</span>
+                <h2 className="text-3xl sm:text-4xl font-serif font-bold text-red-950 mb-3">
+                  Wedding & Corporate Bulk Mithai Estimator
+                </h2>
+                <p className="text-stone-600 text-sm">
+                  Estimate total sweet requirement and unlock wholesale discounts for your upcoming function.
+                </p>
+              </div>
+
+              <div className="max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-3xl border border-amber-200 shadow-md space-y-5">
+                <div>
+                  <div className="flex justify-between text-xs font-bold text-stone-700 mb-1">
+                    <span>Number of Guests / Boxes:</span>
+                    <span className="text-red-950 font-black">{guestCount} Boxes</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="50"
+                    max="1000"
+                    step="25"
+                    value={guestCount}
+                    onChange={(e) => setGuestCount(Number(e.target.value))}
+                    className="w-full accent-red-900"
+                  />
+                </div>
+
+                <div className="grid grid-cols-3 gap-3 text-center bg-amber-50 p-4 rounded-2xl border border-amber-200">
+                  <div>
+                    <span className="text-xs text-stone-500 block">Total Mithai</span>
+                    <span className="text-lg font-bold text-red-950">{Math.round(guestCount * 0.5)} kg</span>
+                  </div>
+                  <div>
+                    <span className="text-xs text-stone-500 block">Bulk Discount</span>
+                    <span className="text-lg font-bold text-emerald-700">{guestCount >= 300 ? '15%' : '10%'} OFF</span>
+                  </div>
+                  <div>
+                    <span className="text-xs text-stone-500 block">Gold Foil Box</span>
+                    <span className="text-lg font-bold text-amber-800">FREE</span>
+                  </div>
+                </div>
+
+                <a
+                  href={`https://wa.me/${SHOP_INFO.whatsapp}?text=${encodeURIComponent(`Namaste Jai Ambe Sweets! Inquiring about a bulk order for ${guestCount} boxes (approx ${Math.round(guestCount * 0.5)} kg). Please share quotation.`)}`}
+                  target="_blank"
+                  className="w-full py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-all"
+                >
+                  💬 Request Bulk Quote on WhatsApp
+                </a>
+              </div>
+            </div>
+          </section>
+
+          {/* 8. REVIEWS */}
+          <section id="reviews" className="py-16 sm:py-24 bg-white border-t border-amber-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <span className="text-xs font-bold text-amber-800 uppercase tracking-wider block mb-2">Testimonials</span>
+              <h2 className="text-3xl sm:text-4xl font-serif font-bold text-red-950 mb-10">
+                Loved Across Generations
+              </h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                {REVIEWS.map((r, i) => (
+                  <div key={i} className="p-6 rounded-2xl bg-amber-50/50 border border-amber-200 flex flex-col justify-between">
+                    <div>
+                      <div className="text-amber-400 mb-2">★★★★★</div>
+                      <p className="text-stone-700 text-xs sm:text-sm italic mb-4 leading-relaxed">"{r.text}"</p>
+                    </div>
+                    <div className="pt-3 border-t border-amber-200">
+                      <h4 className="font-serif font-bold text-red-950 text-sm">{r.name}</h4>
+                      <p className="text-xs text-stone-500">{r.location}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* 9. LOCATION & FAQ */}
+          <section id="location" className="py-16 sm:py-24 bg-[#FAF7F0] border-t border-amber-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                
+                <div className="lg:col-span-5 bg-white p-6 sm:p-8 rounded-3xl border border-amber-200 shadow-sm space-y-4">
+                  <h3 className="font-serif font-bold text-2xl text-red-950">{SHOP_INFO.name}</h3>
+                  <p className="text-xs text-amber-800 font-semibold">{SHOP_INFO.hindiName}</p>
+                  <p className="text-xs sm:text-sm text-stone-600">📍 {SHOP_INFO.address}, {SHOP_INFO.city}</p>
+                  <p className="text-xs sm:text-sm text-stone-600">🕒 {SHOP_INFO.timings}</p>
+                  <p className="text-xs sm:text-sm text-stone-600">📞 {SHOP_INFO.phone}</p>
+                  
+                  <div className="pt-2 flex gap-3">
+                    <a
+                      href={SHOP_INFO.googleMapsUrl}
+                      target="_blank"
+                      className="flex-1 py-2.5 rounded-xl bg-red-900 text-amber-100 text-xs font-bold text-center"
+                    >
+                      🗺️ Google Maps Directions
+                    </a>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7 space-y-3">
+                  <h3 className="font-serif font-bold text-xl text-red-950 mb-3">Frequently Asked Questions</h3>
+                  {FAQS.map((faq, i) => (
+                    <div key={i} className="bg-white rounded-2xl border border-amber-200 p-4">
+                      <button
+                        onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                        className="w-full text-left font-serif font-bold text-sm text-stone-900 flex justify-between items-center"
+                      >
+                        <span>{faq.q}</span>
+                        <span>{openFaq === i ? '▲' : '▼'}</span>
+                      </button>
+                      {openFaq === i && (
+                        <p className="text-xs sm:text-sm text-stone-600 mt-2 pt-2 border-t border-amber-100 leading-relaxed">
+                          {faq.a}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          {/* 10. FOOTER */}
+          <footer className="bg-gradient-to-b from-[#2B0909] to-[#1A0505] text-amber-100/80 py-12 border-t border-amber-600/30">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
+              <div>
+                <span className="font-serif font-bold text-white text-base block">{SHOP_INFO.name} ({SHOP_INFO.hindiName})</span>
+                <span className="text-amber-400">Serving Purity & 100% Desi Ghee Since 1984 | FSSAI Lic: {SHOP_INFO.fssai}</span>
+              </div>
+              <div>
+                © {new Date().getFullYear()} Jai Ambe Sweets. All Rights Reserved.
+              </div>
+            </div>
+          </footer>
+
+          {/* PRODUCT DETAIL MODAL */}
+          {selectedProductForModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-white rounded-3xl max-w-lg w-full p-6 relative border border-amber-300">
+                <button
+                  onClick={() => setSelectedProductForModal(null)}
+                  className="absolute top-4 right-4 text-stone-500 font-bold"
+                >
+                  ✕
+                </button>
+                <img
+                  src={selectedProductForModal.image}
+                  alt={selectedProductForModal.name}
+                  className="w-full h-48 object-cover rounded-2xl mb-4"
+                />
+                <span className="text-xs font-bold text-amber-800">{selectedProductForModal.hindiName}</span>
+                <h3 className="font-serif font-bold text-xl text-red-950 mb-2">{selectedProductForModal.name}</h3>
+                <p className="text-xs text-stone-600 mb-4">{selectedProductForModal.description}</p>
+                <div className="text-xs bg-amber-50 p-2.5 rounded-xl border border-amber-200 mb-4 space-y-1">
+                  <p><strong>Ingredients:</strong> {selectedProductForModal.ingredients}</p>
+                  <p><strong>Shelf Life:</strong> {selectedProductForModal.shelfLife}</p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  {['250g', '500g', '1kg'].map(w => (
+                    <button
+                      key={w}
+                      onClick={() => setModalWeight(w)}
+                      className={`py-2 rounded-xl text-xs font-bold border ${
+                        modalWeight === w ? 'bg-red-900 text-amber-100 border-red-950' : 'bg-white text-stone-700 border-amber-200'
+                      }`}
+                    >
+                      {w} (₹{selectedProductForModal.prices[w]})
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => {
+                    addToCart({
+                      id: `${selectedProductForModal.id}-${modalWeight}`,
+                      name: selectedProductForModal.name,
+                      hindiName: selectedProductForModal.hindiName,
+                      weight: modalWeight,
+                      price: selectedProductForModal.prices[modalWeight],
+                      quantity: 1,
+                      image: selectedProductForModal.image
+                    });
+                    setSelectedProductForModal(null);
+                  }}
+                  className="w-full py-3 rounded-full bg-red-900 hover:bg-red-950 text-amber-100 font-bold text-xs"
+                >
+                  Add to Plate (₹{selectedProductForModal.prices[modalWeight]})
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* SLIDE-OVER CART DRAWER */}
+          {isCartOpen && (
+            <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm animate-fadeIn">
+              <div className="absolute inset-0" onClick={() => setIsCartOpen(false)}></div>
+              <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+                <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col">
+                  
+                  <div className="p-4 bg-red-950 text-white flex justify-between items-center">
+                    <span className="font-serif font-bold text-base text-amber-200">Your Mithai Plate ({cartItems.length})</span>
+                    <button onClick={() => setIsCartOpen(false)} className="text-amber-200">✕</button>
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                    {cartItems.length === 0 ? (
+                      <div className="text-center py-16 text-stone-500 text-xs">Your plate is empty!</div>
+                    ) : (
+                      cartItems.map((item, idx) => (
+                        <div key={item.id} className="p-3 rounded-xl bg-amber-50/50 border border-amber-200 flex gap-3 items-center">
+                          <img src={item.image} className="w-12 h-12 rounded-lg object-cover" />
+                          <div className="flex-1 min-w-0">
+                            <h5 className="font-serif font-bold text-xs truncate text-red-950">{item.name}</h5>
+                            <span className="text-[10px] text-stone-500">{item.weight} • ₹{item.price}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => {
+                                const updated = [...cartItems];
+                                if ((updated[idx].quantity || 1) > 1) {
+                                  updated[idx].quantity -= 1;
+                                  setCartItems(updated);
+                                } else {
+                                  setCartItems(cartItems.filter(p => p.id !== item.id));
+                                }
+                              }}
+                              className="px-2 py-0.5 bg-stone-200 rounded text-xs font-bold"
+                            >
+                              -
+                            </button>
+                            <span className="text-xs font-bold px-1">{item.quantity || 1}</span>
+                            <button
+                              onClick={() => {
+                                const updated = [...cartItems];
+                                updated[idx].quantity = (updated[idx].quantity || 1) + 1;
+                                setCartItems(updated);
+                              }}
+                              className="px-2 py-0.5 bg-stone-200 rounded text-xs font-bold"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+
+                    {cartItems.length > 0 && (
+                      <div className="space-y-2 text-xs pt-2">
+                        <input
+                          type="text"
+                          placeholder="Your Name"
+                          value={custName}
+                          onChange={(e) => setCustName(e.target.value)}
+                          className="w-full p-2 border border-stone-200 rounded-lg text-xs"
+                        />
+                        <input
+                          type="tel"
+                          placeholder="Phone Number"
+                          value={custPhone}
+                          onChange={(e) => setCustPhone(e.target.value)}
+                          className="w-full p-2 border border-stone-200 rounded-lg text-xs"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Delivery Address"
+                          value={custAddress}
+                          onChange={(e) => setCustAddress(e.target.value)}
+                          className="w-full p-2 border border-stone-200 rounded-lg text-xs"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {cartItems.length > 0 && (
+                    <div className="p-4 border-t border-amber-200 space-y-2">
+                      <div className="flex justify-between text-xs">
+                        <span>Subtotal:</span>
+                        <span className="font-bold">₹{subtotal}</span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span>Delivery:</span>
+                        <span className="font-bold text-emerald-700">{delFee === 0 ? 'FREE' : `₹${delFee}`}</span>
+                      </div>
+                      <div className="flex justify-between text-sm font-bold text-red-950 font-serif pt-1 border-t">
+                        <span>Grand Total:</span>
+                        <span>₹{grandTotal}</span>
+                      </div>
+
+                      <button
+                        onClick={handleWhatsAppOrder}
+                        className="w-full py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2"
+                      >
+                        💬 Confirm & Order on WhatsApp
+                      </button>
+                    </div>
+                  )}
+
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
+
